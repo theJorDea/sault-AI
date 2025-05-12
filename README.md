@@ -6,7 +6,7 @@ Telegram бот, использующий Google Gemini AI для генерац
 
 1. Клонируйте репозиторий:
 ```bash
-git clone <repository-url>
+git clone https://github.com/theJorDea/sault-AI
 cd telegram-ai-bot
 ```
 

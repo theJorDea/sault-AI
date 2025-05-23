@@ -35,7 +35,7 @@ class MessageHandler:
         try:
             # Отправляем первоначальное сообщение с более заметной анимацией
             initial_text = f"{prefix}{'.' * dots} ⏳"
-            loading_message = await send_message_with_retry(message, initial_text, parse_mode='MarkdownV2')
+            loading_message = await send_message_with_retry(message, initial_text)
             logger.info(f"Создано сообщение с индикатором загрузки для пользователя {message.from_user.id}: {loading_message.message_id}")
             
             # Сохраняем сообщение в словаре для возможности получения его позже
@@ -58,8 +58,7 @@ class MessageHandler:
                 try:
                     success = await update_message_with_retry(
                         loading_message, 
-                        loading_text, 
-                        parse_mode='MarkdownV2'
+                        loading_text
                     )
                     logger.info(f"Обновлена анимация загрузки для пользователя {message.from_user.id}, точек: {dots}, успех: {success}")
                 except Exception as e:
@@ -177,7 +176,6 @@ class MessageHandler:
                         await send_message_with_retry(
                             message,
                             "🤖 AI: Действие отменено. Чем я могу помочь?",
-                            parse_mode='MarkdownV2',
                             reply_markup=get_main_keyboard()
                         )
                         return
@@ -190,7 +188,6 @@ class MessageHandler:
                 await send_message_with_retry(
                     message,
                     "🤖 AI: Пожалуйста, задайте свой вопрос, и я постараюсь на него ответить.",
-                    parse_mode=None,
                     reply_markup=get_main_keyboard()
                 )
                 return
@@ -201,7 +198,6 @@ class MessageHandler:
                     await send_message_with_retry(
                         message,
                         "🤖 AI: Отправьте мне изображение, которое нужно проанализировать.",
-                        parse_mode=None,
                         reply_markup=get_cancel_keyboard()
                     )
                 return
@@ -212,7 +208,6 @@ class MessageHandler:
                     await send_message_with_retry(
                         message,
                         "🤖 AI: Отправьте мне файл, который нужно обработать. Я могу анализировать текстовые файлы и изображения.",
-                        parse_mode=None,
                         reply_markup=get_cancel_keyboard()
                     )
                 return
@@ -226,7 +221,6 @@ class MessageHandler:
                     "• Обрабатывать текстовые файлы\n"
                     "• Помогать с разными задачами\n\n"
                     "Используйте кнопки меню или просто напишите мне сообщение!",
-                    parse_mode=None,
                     reply_markup=get_main_keyboard()
                 )
                 return
@@ -238,7 +232,6 @@ class MessageHandler:
                     "Я работаю на базе Google Gemini AI, одной из самых продвинутых языковых моделей.\n"
                     "Версия: 1.0\n"
                     "Gemini Model: gemini-2.5-flash-preview-04-17",
-                    parse_mode=None,
                     reply_markup=get_main_keyboard()
                 )
                 return
@@ -285,21 +278,20 @@ class MessageHandler:
                             
                             # Обновляем сообщение с новым содержимым
                             try:
-                                await update_message_with_retry(loading_message, current_text, parse_mode='MarkdownV2')
+                                await update_message_with_retry(loading_message, current_text)
                                 logger.info(f"Обновлено сообщение часть {i+1}/{len(chunks)} для пользователя {user_id}")
                                 # Увеличиваем задержку между обновлениями
                                 await asyncio.sleep(0.5)  # Увеличиваем задержку с 0.2 до 0.5 секунд
                             except Exception as e:
                                 logger.error(f"Ошибка при обновлении сообщения: {str(e)}")
                                 # Если не удалось обновить, отправляем новое сообщение
-                                loading_message = await send_message_with_retry(message, current_text, parse_mode='MarkdownV2')
+                                loading_message = await send_message_with_retry(message, current_text)
                     
                     # В конце добавляем клавиатуру
                     try:
                         await update_message_with_retry(
                             loading_message, 
                             current_text, 
-                            parse_mode='MarkdownV2',
                             reply_markup=get_main_keyboard()
                         )
                         logger.info(f"Добавлена клавиатура к сообщению для пользователя {user_id}")
@@ -309,7 +301,6 @@ class MessageHandler:
                         await send_message_with_retry(
                             message, 
                             current_text, 
-                            parse_mode='MarkdownV2',
                             reply_markup=get_main_keyboard()
                         )
                 else:
@@ -318,7 +309,6 @@ class MessageHandler:
                     await send_message_with_retry(
                         message, 
                         f"🤖 AI: {response_text}", 
-                        parse_mode='MarkdownV2',
                         reply_markup=get_main_keyboard()
                     )
                 
@@ -333,7 +323,6 @@ class MessageHandler:
                 await send_message_with_retry(
                     message,
                     f"🤖 AI: Извините, произошла ошибка при обработке вашего сообщения. Ошибка: {str(e)}",
-                    parse_mode='MarkdownV2',
                     reply_markup=get_main_keyboard()
                 )
             
@@ -348,7 +337,6 @@ class MessageHandler:
             await send_message_with_retry(
                 message,
                 f"🤖 AI: Извините, произошла ошибка при обработке вашего сообщения. Ошибка: {str(e)}",
-                parse_mode='MarkdownV2',
                 reply_markup=get_main_keyboard()
             )
             
@@ -414,12 +402,12 @@ class MessageHandler:
                             
                             # Обновляем сообщение с новым содержимым
                             try:
-                                await update_message_with_retry(loading_message, current_text, parse_mode=None)
+                                await update_message_with_retry(loading_message, current_text)
                                 logger.info(f"Обновлено сообщение с анализом изображения часть {i+1}/{len(chunks)} для пользователя {user_id}")
                             except Exception as e:
                                 logger.error(f"Ошибка при обновлении сообщения с анализом изображения: {str(e)}")
                                 # Если не удалось обновить, отправляем новое сообщение
-                                loading_message = await send_message_with_retry(message, current_text, parse_mode=None)
+                                loading_message = await send_message_with_retry(message, current_text)
                             
                             # Уменьшаем задержку для более быстрого отображения
                             await asyncio.sleep(0.2)
@@ -429,7 +417,6 @@ class MessageHandler:
                         await update_message_with_retry(
                             loading_message, 
                             current_text, 
-                            parse_mode=None,
                             reply_markup=get_main_keyboard()
                         )
                         logger.info(f"Добавлена клавиатура к сообщению с анализом изображения для пользователя {user_id}")
@@ -439,7 +426,6 @@ class MessageHandler:
                         await send_message_with_retry(
                             message, 
                             current_text, 
-                            parse_mode='MarkdownV2',
                             reply_markup=get_main_keyboard()
                         )
                 else:
@@ -448,7 +434,6 @@ class MessageHandler:
                     await send_message_with_retry(
                         message, 
                         f"🤖 AI: {result}", 
-                        parse_mode='MarkdownV2',
                         reply_markup=get_main_keyboard()
                     )
                 
@@ -463,7 +448,6 @@ class MessageHandler:
                 await send_message_with_retry(
                     message,
                     f"🤖 AI: Извините, не удалось проанализировать изображение. Ошибка: {str(e)}",
-                    parse_mode='MarkdownV2',
                     reply_markup=get_main_keyboard()
                 )
             
@@ -481,7 +465,6 @@ class MessageHandler:
             await send_message_with_retry(
                 message,
                 f"🤖 AI: Извините, произошла ошибка при обработке вашего изображения. Ошибка: {str(e)}",
-                parse_mode=None,
                 reply_markup=get_main_keyboard()
             )
             # Очищаем состояние
@@ -507,8 +490,7 @@ class MessageHandler:
                     # Если состояние не соответствует ожиданию файла, уведомляем пользователя
                     await send_message_with_retry(
                         message,
-                        "🤖 AI: Я обрабатываю ваш файл. Подождите, пожалуйста...",
-                        parse_mode='MarkdownV2'
+                        "🤖 AI: Я обрабатываю ваш файл. Подождите, пожалуйста..."
                     )
             
             # Логируем получение файла
@@ -556,12 +538,12 @@ class MessageHandler:
                             
                             # Обновляем сообщение с новым содержимым
                             try:
-                                await update_message_with_retry(loading_message, current_text, parse_mode=None)
+                                await update_message_with_retry(loading_message, current_text)
                                 logger.info(f"Обновлено сообщение с анализом файла часть {i+1}/{len(chunks)} для пользователя {user_id}")
                             except Exception as e:
                                 logger.error(f"Ошибка при обновлении сообщения с анализом файла: {str(e)}")
                                 # Если не удалось обновить, отправляем новое сообщение
-                                loading_message = await send_message_with_retry(message, current_text, parse_mode=None)
+                                loading_message = await send_message_with_retry(message, current_text)
                             
                             # Уменьшаем задержку для более быстрого отображения
                             await asyncio.sleep(0.2)
@@ -571,7 +553,6 @@ class MessageHandler:
                         await update_message_with_retry(
                             loading_message, 
                             current_text, 
-                            parse_mode=None,
                             reply_markup=get_main_keyboard()
                         )
                         logger.info(f"Добавлена клавиатура к сообщению с анализом файла для пользователя {user_id}")
@@ -581,7 +562,6 @@ class MessageHandler:
                         await send_message_with_retry(
                             message, 
                             current_text, 
-                            parse_mode=None,
                             reply_markup=get_main_keyboard()
                         )
                 else:
@@ -590,7 +570,6 @@ class MessageHandler:
                     await send_message_with_retry(
                         message, 
                         f"🤖 AI: {result}", 
-                        parse_mode=None,
                         reply_markup=get_main_keyboard()
                     )
                 
@@ -605,7 +584,6 @@ class MessageHandler:
                 await send_message_with_retry(
                     message,
                     f"🤖 AI: Извините, не удалось проанализировать файл. Ошибка: {str(e)}",
-                    parse_mode=None,
                     reply_markup=get_main_keyboard()
                 )
             
@@ -623,7 +601,6 @@ class MessageHandler:
             await send_message_with_retry(
                 message,
                 f"🤖 AI: Извините, произошла ошибка при обработке вашего файла. Ошибка: {str(e)}",
-                parse_mode=None,
                 reply_markup=get_main_keyboard()
             )
             # Очищаем состояние

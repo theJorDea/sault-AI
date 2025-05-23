@@ -5,13 +5,13 @@ from aiogram.exceptions import TelegramRetryAfter
 
 logger = logging.getLogger(__name__)
 
-async def send_message_with_retry(message: types.Message, text: str, retry_count: int = 3, parse_mode: str = None, reply_markup = None) -> types.Message:
+async def send_message_with_retry(message: types.Message, text: str, retry_count: int = 3, reply_markup = None) -> types.Message:
     """
     Отправляет сообщение с повторными попытками при ошибке флуд-контроля
     """
     for attempt in range(retry_count):
         try:
-            return await message.answer(text, parse_mode=parse_mode, reply_markup=reply_markup)
+            return await message.answer(text, reply_markup=reply_markup)
         except TelegramRetryAfter as e:
             if attempt < retry_count - 1:
                 wait_time = e.retry_after
@@ -25,7 +25,7 @@ async def send_message_with_retry(message: types.Message, text: str, retry_count
             raise
     raise Exception("Не удалось отправить сообщение")
 
-async def update_message_with_retry(message: types.Message, text: str, retry_count: int = 3, parse_mode: str = None, reply_markup = None) -> bool:
+async def update_message_with_retry(message: types.Message, text: str, retry_count: int = 3, reply_markup = None) -> bool:
     """
     Обновляет существующее сообщение с повторными попытками при ошибке флуд-контроля
     
@@ -33,7 +33,6 @@ async def update_message_with_retry(message: types.Message, text: str, retry_cou
         message: Сообщение для обновления
         text: Новый текст
         retry_count: Количество попыток обновления
-        parse_mode: Режим парсинга (Markdown или HTML или None)
         reply_markup: Разметка клавиатуры
         
     Returns:
@@ -45,7 +44,7 @@ async def update_message_with_retry(message: types.Message, text: str, retry_cou
         
     for attempt in range(retry_count):
         try:
-            await message.edit_text(text, parse_mode=parse_mode, reply_markup=reply_markup)
+            await message.edit_text(text, reply_markup=reply_markup)
             return True
         except TelegramRetryAfter as e:
             if attempt < retry_count - 1:

@@ -23,7 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Инициализация бота и диспетчера
-bot = Bot(token=TELEGRAM_TOKEN)
+bot = Bot(token=TELEGRAM_TOKEN, parse_mode="MarkdownV2")
 # Используем хранилище состояний в памяти
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)

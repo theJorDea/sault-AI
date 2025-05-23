@@ -2,7 +2,6 @@ import os
 import tempfile
 import google.generativeai as genai
 from src.config.config import GOOGLE_API_KEY, MODEL_CONFIG
-from aiogram.types import FSInputFile
 import logging
 
 class GeminiService:

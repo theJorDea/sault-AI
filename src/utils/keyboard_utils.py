@@ -1,4 +1,5 @@
-from aiogram.types import KeyboardButton, KeyboardBuilder
+from aiogram.utils.keyboard import KeyboardBuilder
+from aiogram.types import KeyboardButton
 
 def get_main_keyboard() -> KeyboardBuilder:
     """

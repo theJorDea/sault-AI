@@ -1,5 +1,4 @@
 from aiogram import types
-from aiogram.filters import Command
 from src.utils.message_utils import send_message_with_retry
 from src.utils.keyboard_utils import get_main_keyboard
 

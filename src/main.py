@@ -9,6 +9,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from src.config.config import TELEGRAM_TOKEN, LOGGING_CONFIG
 from src.handlers.command_handlers import cmd_start, cmd_help, cmd_about
 from src.handlers.message_handler import MessageHandler, BotState
+from aiogram.client.default import DefaultBotProperties
 
 import google.generativeai as genai # Основной импорт для Gemini
 
@@ -23,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Инициализация бота и диспетчера
-bot = Bot(token=TELEGRAM_TOKEN, parse_mode="MarkdownV2")
+bot = Bot(token=TELEGRAM_TOKEN, default=DefaultBotProperties(parse_mode="MarkdownV2"))
 # Используем хранилище состояний в памяти
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
